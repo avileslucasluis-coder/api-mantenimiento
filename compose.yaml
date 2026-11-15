@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:17-alpine
+    ports:
+      - '127.0.0.1:5544:5432'
+    environment:
+      POSTGRES_DB: gestion
+      POSTGRES_USER: gestion
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Configura DB_PASSWORD en .env}
+    volumes:
+      - gestion_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U gestion -d gestion']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  gestion_data:

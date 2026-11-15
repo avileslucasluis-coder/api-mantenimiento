@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Rol {
+  ADMIN
+  BODEGUERO
+}
+
+enum TipoMovimiento {
+  ENTRADA
+  SALIDA
+}
+
+enum TipoMantenimiento {
+  PREVENTIVO
+  CORRECTIVO
+}
+
+enum EstadoMantenimiento {
+  ABIERTO
+  CERRADO
+}
+
+model Usuario {
+  id String @id @default(uuid())
+  nombre String
+  email String @unique
+  passwordHash String
+  rol Rol @default(BODEGUERO)
+  movimientos Movimiento[]
+}
+
+model Categoria {
+  id String @id @default(uuid())
+  nombre String @unique
+  descripcion String @default("")
+  productos Producto[]
+}
+
+model Producto {
+  id String @id @default(uuid())
+  codigo String @unique
+  nombre String
+  descripcion String @default("")
+  precio Decimal @default(0) @db.Decimal(12,2)
+  stock Int @default(0)
+  stockMinimo Int @default(5)
+  unidad String @default("unidad")
+  categoriaId String
+  categoria Categoria @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
+  movimientos Movimiento[]
+}
+
+model Equipo {
+  id String @id @default(uuid())
+  codigo String @unique
+  nombre String
+  ubicacion String
+  descripcion String @default("")
+  mantenimientos Mantenimiento[]
+}
+
+model Mantenimiento {
+  id String @id @default(uuid())
+  equipoId String
+  equipo Equipo @relation(fields: [equipoId], references: [id], onDelete: Restrict)
+  tipo TipoMantenimiento
+  estado EstadoMantenimiento @default(ABIERTO)
+  descripcion String
+  fecha DateTime @default(now())
+  cerradoEn DateTime?
+  movimientos Movimiento[]
+}
+
+model Movimiento {
+  id String @id @default(uuid())
+  productoId String
+  producto Producto @relation(fields: [productoId], references: [id], onDelete: Restrict)
+  usuarioId String
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+  mantenimientoId String?
+  mantenimiento Mantenimiento? @relation(fields: [mantenimientoId], references: [id], onDelete: Restrict)
+  tipo TipoMovimiento
+  cantidad Int
+  motivo String @default("")
+  fecha DateTime @default(now())
+}
