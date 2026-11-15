@@ -73,4 +73,6 @@ El README de la app explica los roles y el recorrido completo de usuario.
 
 El flujo `.github/workflows/ci.yml` prepara PostgreSQL 17 aislado, genera Prisma, aplica migraciones, compila, revisa lint y ejecuta las pruebas unitarias, e2e e integración. Las credenciales se generan para esa ejecución. No utiliza la base de producción. El flujo aún no se ha ejecutado en GitHub.
 
-La suite unitaria contiene 11 pruebas; diez comprueban hashing, sal aleatoria, contraseñas incorrectas, normalización del correo, registro duplicado y datos públicos de sesión.
+La suite unitaria contiene 12 pruebas; diez comprueban hashing, sal aleatoria, contraseñas incorrectas, normalización del correo, registro duplicado y datos públicos de sesión.
+
+El comando `npm run test:e2e` compila y arranca un proceso de API en un puerto libre, ejecuta ocho verificaciones HTTP y lo cierra al terminar. Requiere una base de desarrollo migrada y las variables de `.env`. Comprueba autenticación, validación, rechazo de asignación de rol, cabeceras y disponibilidad de PostgreSQL. `/health` devuelve `db: ok` tras consultar la base o HTTP 503 sin detalles internos si falla.
